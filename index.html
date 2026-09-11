@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مكتب البدراوي - PS4 Host 11.00</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0e1a;color:#fff;font-family:'Segoe UI',Tahoma;min-height:100vh;display:flex;flex-direction:column}
+.header{background:linear-gradient(90deg,#151c2f,#1a2340);border-bottom:3px solid #00d4ff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:10}
+.brand-name{color:#00d4ff;font-size:20px;font-weight:900;text-shadow:0 0 10px #00d4ff}
+.brand-sub{color:#aaa;font-size:11px}
+.phone-badge{background:#ffd600;color:#000;padding:6px 14px;border-radius:20px;font-weight:900;direction:ltr;font-size:14px}
+.main{flex:1;display:flex;flex-direction:column;position:relative}
+.iframe-wrap{flex:1;position:relative}
+.iframe-wrap iframe{width:100%;height:100%;border:0;min-height:85vh}
+.branding-overlay{position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,#0a0e1acc,#151c2fcc);padding:8px 15px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;border-bottom:2px solid #00d4ff66}
+.branding-overlay .left{color:#ffd600;font-weight:900;font-size:14px}
+.branding-overlay .right{color:#00ff88;font-size:11px;background:#0008;padding:4px 10px;border-radius:10px}
+.footer{background:#000;padding:10px;text-align:center;border-top:1px solid #222;font-size:11px;color:#666}
+.footer b{color:#ffd600}
+.loading-screen{position:absolute;inset:0;background:#0a0e1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;transition:opacity 0.5s}
+.loading-screen.hide{opacity:0;pointer-events:none}
+.pct{font-size:72px;font-weight:900;color:#00ff88;font-family:monospace;text-shadow:0 0 30px #00ff88}
+.bar{width:80%;max-width:400px;height:20px;background:#1a1a2e;border:2px solid #333;border-radius:12px;overflow:hidden;margin:15px 0}
+.fill{height:100%;width:0%;background:linear-gradient(90deg,#00d4ff,#00ff88,#ffd600);transition:width 0.3s}
+.log{font-family:monospace;font-size:11px;color:#0f0;background:#000;border:1px solid #333;padding:8px;border-radius:8px;width:80%;max-width:500px;min-height:60px;text-align:left;direction:ltr}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="brand-name">👑 مكتب البدراوي لديكورات الجبس 👑</div>
+    <div class="brand-sub">Mpadrawy Host 11.00-13.00 - بطرة طلخا المنصورة - PS4 Jailbreak</div>
+  </div>
+  <div class="phone-badge">📞 01008395192</div>
+</div>
+
+<div class="main">
+  <!-- شاشة التحميل باسمك -->
+  <div id="loading" class="loading-screen">
+    <div style="color:#ffd600;font-size:28px;font-weight:900;margin-bottom:10px">Mpadrawy Host 11.00</div>
+    <div style="color:#00d4ff;font-size:13px;margin-bottom:20px">Full Browser Exploit - Lapse / Poops</div>
+    <div id="pct" class="pct">0%</div>
+    <div class="bar"><div id="fill" class="fill"></div></div>
+    <div id="log" class="log">[0%] Mpadrawy Host Loading...
+[0%] Connecting to exploit backend...</div>
+    <div style="margin-top:15px;color:#aaa;font-size:12px">Designed by Mohamed El-Badrawy - 01008395192</div>
+  </div>
+
+  <div class="iframe-wrap">
+    <!-- ده الهوست الحقيقي اللي في الصورة بتاعتك - شغال متصفح صافي -->
+    <iframe id="realHost" src="https://sinajet.github.io/psphive-lapse-2/index.html"></iframe>
+    <div class="branding-overlay">
+      <div class="left">👑 البدراوي - 01008395192</div>
+      <div class="right">✅ متصفح صافي - بدون كابل</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  تم التعديل بواسطة <b>Mohamed El-Badrawy - بطرة</b> | <b>01008395192</b> | Original Exploit by Sinajet / W90008 / PSFree Team | GoldHEN 2.4b18.5
+</div>
+
+<script>
+let pctEl = document.getElementById('pct');
+let fillEl = document.getElementById('fill');
+let logEl = document.getElementById('log');
+let loadingEl = document.getElementById('loading');
+let p = 0;
+
+function addLog(t){
+  logEl.textContent += "\n" + t;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function setP(v){
+  p = v;
+  pctEl.textContent = v + "%";
+  fillEl.style.width = v + "%";
+}
+
+// محاكاة تحميل باسمك لحد ما الهوست الحقيقي يفتح
+let interval = setInterval(()=>{
+  p += Math.random()*8;
+  if(p>90) p=90;
+  setP(Math.floor(p));
+  if(p>10 && p<15) addLog("[15%] Loading PSFree WebKit...");
+  if(p>30 && p<35) addLog("[35%] Lapse Kernel Exploit - Poops");
+  if(p>60 && p<65) addLog("[65%] Waiting for GoldHEN...");
+}, 400);
+
+// لما ال iframe يحمل - اخفي شاشة التحميل بتاعتك وخلي الهوست الحقيقي يظهر
+document.getElementById('realHost').onload = function(){
+  clearInterval(interval);
+  setP(100);
+  addLog("[100%] Mpadrawy Host Loaded Successfully!");
+  addLog("[100%] GoldHEN Ready - اضغط GoldHEN في الصفحة اللي تحت");
+  setTimeout(()=>{
+    loadingEl.classList.add('hide');
+  }, 1200);
+};
+
+// لو النت ضعيف - بعد 8 ثواني اخفي التحميل بردو
+setTimeout(()=>{
+  if(!loadingEl.classList.contains('hide')){
+    loadingEl.classList.add('hide');
+  }
+}, 8000);
+</script>
+</body>
+</html>
