@@ -1,181 +1,209 @@
-# PI Pwn
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mpadrawy - PS4 Pro 11.00 GoldHEN v2.4b18.10</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0a0e13;color:#fff;font-family:'Segoe UI',Tahoma;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px}
+.header{font-size:14px;color:#888;letter-spacing:2px}
+h1{margin:10px 0 5px;color:#ffd700;font-size:32px;text-shadow:0 0 20px #ffd700}
+.sub{color:#aaa;margin-bottom:20px}
+.card{width:100%;max-width:500px;background:linear-gradient(180deg,#1a2332,#0f141e);border:1px solid #ffd70055;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.badge-row{display:flex;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
+.badge{background:#ffd700;color:#000;padding:6px 14px;border-radius:100px;font-weight:900;font-size:11px}
+.btn{width:100%;padding:18px;border:none;border-radius:14px;font-size:20px;font-weight:900;cursor:pointer;margin:8px 0;transition:.15s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-gold{background:linear-gradient(90deg,#ffd700,#ffb700);color:#000;box-shadow:0 8px 25px rgba(255,215,0,.35)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,215,0,.5)}
+.btn-dark{background:#1e2a3a;color:#fff;border:1px solid #2a3a50}
+.btn-dark:hover{background:#263548}
+#log{background:#000;border-radius:12px;padding:14px;margin-top:18px;font-family:monospace;font-size:12px;min-height:110px;max-height:220px;overflow:auto;text-align:left;direction:ltr;border:1px solid #1a2a3a;line-height:1.7}
+.ok{color:#00ff88}.warn{color:#ffd700}.err{color:#ff5555}.info{color:#88aacc}
+.progress{height:6px;background:#111;border-radius:10px;margin-top:12px;overflow:hidden}
+.progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#ff8c00);transition:width .4s}
+.footer{margin-top:18px;font-size:11px;color:#556}
+.footer a{color:#ffd700;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">MPADRAWY.GITHUB.IO</div>
+<h1>PS4 PRO 11.00</h1>
+<div class="sub">GoldHEN v2.4b18.10 - Lapse Exploit</div>
+<div class="badge-row">
+<span class="badge">PRO 11.00</span>
+<span class="badge">GOLDHEN 2.4b18.10</span>
+<span class="badge">LAPSE 9.00-12.02</span>
+</div>
 
-This is a script to setup <a href=https://github.com/TheOfficialFloW/PPPwn>PPPwn</a> and <a href=https://github.com/xfangfang/PPPwn_cpp>PPPwn_cpp</a> on the raspberry pi.<br> 
+<div class="card">
+<button class="btn btn-gold" id="goBtn" onclick="start()">▶️ تشغيل GoldHEN</button>
+<button class="btn btn-dark" onclick="loadExtra('binloader')">📦 BinLoader 9021</button>
+<button class="btn btn-dark" onclick="loadExtra('ftp')">📁 FTP Server</button>
+<button class="btn btn-dark" onclick="loadExtra('tweak')">🔧 Tweak & Cheats</button>
 
-<a href=https://github.com/GoldHEN/GoldHEN>GoldHen</a> will run on firmware versions<br>
+<div class="progress"><i id="bar"></i></div>
+<div id="log"><span class="ok">● Host Ready</span><br><span class="info">Mpadrawy.github.io - FW 11.00</span><br><span class="info">Press GoldHEN to start...</span></div>
 
-9.00<br>
-9.60<br>
-10.00, 10.01<br>
-11.00<br>
+<div class="footer">
+Host by <b>محمد البدراوي</b> | 
+<a href="https://github.com/GoldHEN/GoldHEN" target="_blank">GoldHEN Official</a><br>
+لو فشل اعمل تحديث للصفحة وجرب تاني - طبيعي في 11.00
+</div>
+</div>
 
-<br>
+<script>
+// ===== إعدادات Mpadrawy Host - آخر إصدار =====
+const VERSION = "v2.4b18.10 - 11.00 PRO";
+const FW = "11.00";
 
-<a href=https://github.com/EchoStretch/ps4-hen-vtx>ps4-hen-vtx</a> will run on firmware versions<br>
+// مصادر GoldHEN - نستخدم CDN لضمان العمل على GitHub Pages
+const SOURCES = {
+  goldhen: [
+    "./goldhen.bin", // لو رفعته مع الهوست
+    "./payloads/goldhen_11.0.bin",
+    "./payloads/goldhen.bin",
+    "https://cdn.jsdelivr.net/gh/GoldHEN/GoldHEN@main/goldhen_11.0.bin",
+    "https://github.com/GoldHEN/GoldHEN/releases/latest/download/goldhen_11.0.bin"
+  ],
+  psfree: "https://cdn.jsdelivr.net/gh/GoldHEN/henloader_lp@main/dist/psfree.js",
+  lapse: "https://cdn.jsdelivr.net/gh/GoldHEN/henloader_lp@main/dist/lapse.js",
+  loader: "https://cdn.jsdelivr.net/gh/GoldHEN/henloader_lp@main/dist/loader.js"
+};
 
-7.00, 7.01, 7.02<br>
-7.50, 7.51, 7.55<br>
-8.00, 8.01, 8.03<br>
-8.50, 8.52<br>
-9.00<br>
-9.03, 9.04<br>
-9.50, 9.51, 9.60<br>
-10.00, 10.01<br>
-10.50, 10.70, 10.71<br>
-11.00<br>
+let exploitRunning = false;
 
-<br>
+function $log(msg, cls="info"){
+  const el = document.getElementById('log');
+  const time = new Date().toLocaleTimeString();
+  el.innerHTML += `<br><span class="${cls}">[${time}] ${msg}</span>`;
+  el.scrollTop = el.scrollHeight;
+  console.log(msg);
+}
+function progress(p){ document.getElementById('bar').style.width = p+"%"; }
+function setBtn(disabled){
+  document.getElementById('goBtn').disabled = disabled;
+  document.getElementById('goBtn').style.opacity = disabled? "0.5":"1";
+}
 
-It also supports internet access after pwn and access to ftp, klog and binloader servers launched by goldhen.<br>
-A dns blocker is also installed and used to prevent updates.<br>
+async function loadScript(url){
+  return new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src=url; s.onload=resolve; s.onerror=()=>reject(new Error('Failed '+url));
+    document.head.appendChild(s);
+  });
+}
 
-The <a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4</a>, <a href=https://www.raspberrypi.com/products/raspberry-pi-400/>Raspberry Pi 400</a> and <a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a> can pass through a usb drive inserted into the pi to the console if the pi is plugged into the console usb port<br>
+// تحميل GoldHEN bin بأكثر من مصدر
+async function fetchGoldHEN(){
+  for(const url of SOURCES.goldhen){
+    try{
+      $log(`محاولة تحميل GoldHEN من: ${url}`,"info");
+      const r = await fetch(url, {cache:"no-store"});
+      if(r.ok){
+        const buf = await r.arrayBuffer();
+        if(buf.byteLength > 100000){ // GoldHEN حجمه ~ كبير
+          $log(`✅ تم تحميل GoldHEN ${buf.byteLength} bytes من ${url}`,"ok");
+          return buf;
+        }
+      }
+    }catch(e){ $log(`فشل من ${url}: ${e.message}`,"warn"); }
+  }
+  throw new Error("لم أجد ملف goldhen_11.0.bin - ضعه في نفس المجلد مع index.html");
+}
 
-There is also a webserver to control the pi, change settings and send payloads by accessing http://pppwn.local from the console or your pc if you have internet access enabled.<br> 
+async function start(){
+  if(exploitRunning) return;
+  exploitRunning = true;
+  setBtn(true);
+  progress(10);
+  $log("=== بدء التشغيل PS4 PRO 11.00 ===","ok");
+  $log(`Version: ${VERSION}`,"info");
 
-<br>
+  try{
+    progress(20);
+    $log("تحميل ثغرة PSFree...","info");
+    try{ await loadScript(SOURCES.psfree); $log("PSFree Loaded","ok"); }
+    catch(e){ $log("PSFree من CDN فشل، نحاول المحلي","warn"); try{await loadScript("./psfree.js")}catch(_){} }
 
-## Tested PI Models
+    progress(35);
+    $log("تحميل ثغرة Lapse 9.00-12.02...","info");
+    try{ await loadScript(SOURCES.lapse); $log("Lapse Loaded - يدعم 11.00","ok"); }
+    catch(e){ $log("Lapse CDN فشل، نحاول المحلي","warn"); try{await loadScript("./lapse.js")}catch(_){} }
 
-These are models i have tested with but pi-pwn is not limited to these models.<br>
-<a href=https://www.raspberrypi.com/products/raspberry-pi-5/>Raspberry Pi 5</a><br>
-<a href=https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>Raspberry Pi 4 Model B</a><br>
-<a href=https://www.raspberrypi.com/products/raspberry-pi-400/>Raspberry Pi 400</a><br>
-<a href=https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/>Raspberry Pi 3B+</a><br>
-<a href=https://www.raspberrypi.com/products/raspberry-pi-2-model-b/>Raspberry Pi 2 Model B</a><br>
-<a href=https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/>Raspberry Pi Zero 2 W</a> with usb to ethernet adapter<br>
-<a href=https://www.raspberrypi.com/products/raspberry-pi-zero-w/>Raspberry Pi Zero W</a> with usb to ethernet adapter<br>
-<a href=https://wiki.radxa.com/Rock4/4cplus>ROCK PI 4C Plus</a> with armbian <a href=https://imola.armbian.com/archive/rockpi-4cplus/archive/Armbian_23.11.1_Rockpi-4cplus_bookworm_current_6.1.63.img.xz>Image</a><br>
-<a href=https://biqu.equipment/products/bigtreetech-btt-pi-v1-2>BIGTREETECH BTT Pi V1.2</a> with armbian <a href=https://www.armbian.com/bigtreetech-cb1/>minimal</a><br>
-<a href=https://www.linksprite.com/linksprite-pcduino3/>pcDuino3b</a> with armbian <a href=https://imola.armbian.com/archive/pcduino3nano/archive/Armbian_5.38_Pcduino3nano_Debian_jessie_next_4.14.14.7z>Image</a><br>
+    progress(50);
+    try{ await loadScript(SOURCES.loader); $log("Loader Loaded","ok"); }catch(e){}
 
+    progress(65);
+    $log("تحميل GoldHEN v2.4b18.10 لـ 11.00...","info");
+    const goldhenBuf = await fetchGoldHEN();
+    
+    progress(80);
+    $log("🔥 تنفيذ الثغرة - لا تلمس الدراع - انتظر 20 ثانية...","warn");
+    $log("Exploiting kernel... DO NOT TOUCH","warn");
 
-## Install
-<br>
+    // تنفيذ الثغرة الحقيقية
+    if(typeof runLapseExploit === 'function'){
+      $log("تشغيل runLapseExploit()...","ok");
+      runLapseExploit(goldhenBuf);
+    } else if(window.LapseExploit && window.LapseExploit.run){
+      window.LapseExploit.run(goldhenBuf);
+    } else if(window.pppwn_exploit){ // لو مستخدم PI-Pwn
+      $log("PI-Pwn mode detected - إرسال لـ 9020","info");
+      await sendToBinloader(goldhenBuf);
+    } else {
+      // Fallback: محاولة حقن مباشر
+      $log("محاولة حقن مباشر...","warn");
+      await sendToBinloader(goldhenBuf);
+      $log("إذا كنت تستخدم PI-Pwn وتشوف PPPwned، GoldHEN سيعمل الآن","ok");
+      $log("إذا كنت بدون PI-Pwn، تأكد أنك نسخت ملفات henloader_lp/dist إلى نفس المجلد","warn");
+    }
 
-You need to install <a href=https://www.raspberrypi.com/software/operating-systems/>Raspberry Pi OS Lite</a> or <a href="https://www.armbian.com/">Armbian Cli / Minimal</a> onto a sd card.<br>
+    progress(100);
 
-Place the sd card into the raspberry pi, boot it and connect it to the internet then run the following commands<br>
+  }catch(err){
+    $log(`❌ خطأ: ${err.message}`,"err");
+    $log("جرب: 1- اعمل Refresh 2- امسح كاش المتصفح 3- تأكد من وجود goldhen.bin","warn");
+    exploitRunning = false;
+    setBtn(false);
+    progress(0);
+  }
+}
 
-<br>
+async function sendToBinloader(buf){
+  // إرسال للـ PS4 على بورت 9020/9021 (يستخدم مع PI-Pwn)
+  const targets = [":9020",":9021",":9090"];
+  for(const port of targets){
+    try{
+      await fetch(`http://${location.hostname}${port}/`,{method:"POST",body:buf,mode:"no-cors"});
+      $log(`تم الإرسال على ${port}`,"ok");
+      return;
+    }catch(e){}
+  }
+  // حاول على IP الراسبيري الافتراضي
+  try{
+    await fetch(`http://192.168.1.1:9020/`,{method:"POST",body:buf,mode:"no-cors"});
+  }catch(e){}
+}
 
-```sh
-sudo apt update
-sudo apt install git -y
-sudo rm -f -r PI-Pwn
-sudo systemctl stop pipwn
-git clone https://github.com/stooged/PI-Pwn
-sudo mkdir /boot/firmware/
-cd PI-Pwn
-sudo cp -r PPPwn /boot/firmware/
-cd /boot/firmware/PPPwn
-sudo chmod 777 *
-sudo bash install.sh
-```
+async function loadExtra(type){
+  $log(`تحميل ${type}...`,"info");
+  // نفس منطق GoldHEN لكن لبايلود آخر - يمكنك إضافة ملفاتك في payloads/
+  try{
+    const url = `./payloads/${type}.bin`;
+    const r = await fetch(url);
+    if(r.ok){
+      const buf = await r.arrayBuffer();
+      await sendToBinloader(buf);
+      $log(`${type} تم إرساله`,"ok");
+    } else {
+      $log(`ضع ملف ${type}.bin في مجلد payloads/`,"warn");
+    }
+  }catch(e){ $log(e.message,"err"); }
+}
 
-<br>
-
-During the install process you will be asked to set some options.<br>
-
-If you are using a <b>usb to ethernet adapter</b> for the connection to the console you need to select yes<br>
-If your pi has an ethernet port and you are using a usb to ethernet adapter your interface for the usb adapter should be eth1<br>
-If you are using something like a pi zero 2 the interface will be eth0<br>
-
-Once the pi reboots pppwn will run automatically.<br>
-
-
-
-## On your PS4:<br>
-
-- Go to `Settings` and then `Network`<br>
-- Select `Set Up Internet connection` and choose `Use a LAN Cable`<br>
-- Choose `Custom` setup and choose `PPPoE` for `IP Address Settings`<br>
-- Enter `ppp` for `PPPoE User ID` and `PPPoE Password`<br>
-- NOTE if you enable internet access you must match the username and password entered during the install or use the default `ppp`
-- Choose `Automatic` for `DNS Settings` and `MTU Settings`<br>
-- Choose `Do Not Use` for `Proxy Server`<br>
-
-
-For GoldHen you need to place the goldhen.bin file onto the root of a usb drive and plug it into the console.<br>
-Once goldhen has been loaded for the first time it will be copied to the consoles internal hdd and the usb is no longer required.<br>
-To update goldhen just repeat the above process and the new version will be copied to the internal hdd<br>
-
-
-## Console FTP / Binload
-
-If the pi pwn was setup to allow internet access you can use the ftp, klog, and binloader servers on the console<br>
-Your pi must be also connected to your home network via wifi or a second ethernet connection<br>
-To connect to the servers from your pc just connect to the raspberry pi ip on your network and all requests will be forwarded to the console<br>
-
-For ftp make sure you set the transfer mode on your ftp client software to `Active` not passive.<br>
-
-
-## USB pass through drive
-
-You can put a usb flash drive in the pi and that will be mounted to the console, you must put a folder on the root of the drive called "payloads"<br>
-To use this feature you must plug the raspberry pi 4 / 400 / 5 into the consoles usb port using the usb-c connection on the pi.<br>
-If you have power issues you can use a usb Y cable to inject power from another source but in my tests both pi variants ran using a single cable.<br>
-
-
-## Rest Mode
-
-You can enable the option to detect if goldhen is running in the options which will cause pi-pwn to check if goldhen is active before running pppwn, this is useful for rest mode<br>
-If you have the pi powered from the console usb port you must disable "Supply Power to USB Ports" in the rest mode settings of the console.<br>
-The console must also use the PPPoe user and pass set for the "console internet connection" of pi-pwn or the defaults if you never changed them which are ppp for both user and password.<br>
-
-
-## PI FTP
-
-If you install FTP to access the pppwn folder for the exploit files you must use your root login user/pass to access the server.<br>
-The ftp server uses the standard ports 21 and 20.
-
-## PI Samba
-
-If you setup samba to access the pppwn folder for the exploit files you can access the drive on... <br>
-` \\pppwn.local\pppwn `<br>
-or <br>
-` smb:\\pppwn.local\pppwn `<br>
-<br>
-The share has no user/password required to access it.
-
-
-## What it does
-
-Once everything is setup and the ethernet cable is plugged in between the pi and the console the pi should automatically try and pwn the console.<br>
-The exploit may fail many times but the pi will continue to purge the console to keep trying to pwn itself.<br>
-Once pwned the process will stop and the pi will shut down if you are not using internet access. <br>
-
-The idea is you boot the console and the pi together and the pi will keep trying to pwn the console without any input from you, just wait on the home screen until the process completes<br>
-
-
-## Updating
-
-You can edit the exploit scripts by putting the sd card in your computer and going to the PPPwn folder.<br>
-The commands above can also be run again to install updates or change the settings.<br>
-You can also click the update button on the web ui.<br>
-
-
-## Options
-
- `Interface` - this is the lan interface on the pi that is connected to the console.<br><br>
- `Firmware version` - version of firmware running on the console.<br><br>
- `Time to restart PPPwn if it hangs` - a timeout in minutes to restart pppwn if the exploit hangs mid process.<br><br>
- `Led activity` - on selected pi models this will have the leds flash based on the exploit progress.<br><br>
- `Use Python version` - enabling this will force the use of the original python pppwn released by <a href=https://github.com/TheOfficialFloW/PPPwn>TheOfficialFloW</a> <br><br>
- `Use GoldHen if available for selected firmware` - if this is not enabled or your firmware has no goldhen available vtx-hen will be used.<br><br>
- `Use original source ipv6` - this will force pppwn to use the original ipv6 address that was used in pppwn as on some consoles it increases the speed of pwn.<br><br>
- `Use usb ethernet adapter for console connection` - only enable this if you are using a usb to ethernet adapter to connect to the console.<br><br>
- `Detect if goldhen is running` - this will make pi-pwn check if goldhen is loaded on the console and skip running pppwn if it is running.<br><br>
- `Detect console shutdown and restart PPPwn` - with this enabled if the link is lost between the pi and the console pppwn will be restarted.<br><br>
- `Enable verbose PPPwn` - enables debug output from pppwn so you can see the exploit progress.<br><br>
- `Enable console internet access` - enabling this will make pi-pwn setup a connection to the console allowing internet access after pppwn succeeds.<br><br>
- `Disable DNS blocker` - enabling this will turn off the dns blocker that blocks certain servers that are used for updates and telemetry. <br><br>
- `Shutdown PI after PWN` - if enabled this will make the pi shutdown after pppwn succeeds.<br><br>
- `Enable usb drive to console` - on selected pi models this will allow a usb drive in the pi to be passed through to the console.<br><br>
- `Ports` - this is a list of ports that are forwarded from the pi to the console, single ports or port ranges can be used.<br><br>
- 
- 
- ## Credits
- 
- All credit goes to <a href=https://github.com/TheOfficialFloW>TheOfficialFloW</a>, <a href=https://github.com/xfangfang>xfangfang</a>, <a href=https://github.com/SiSTR0>SiSTR0</a>, <a href=https://github.com/xvortex>Vortex</a>, <a href=https://github.com/EchoStretch>EchoStretch</a> and many other people who have made this project possible.<br><br>
- 
+// منع النوم
+setInterval(()=>{ try{ localStorage.setItem('stay','1'); }catch(e){} }, 5000);
+</script>
+</body>
+</html>
